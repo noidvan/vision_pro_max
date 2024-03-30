@@ -52,6 +52,7 @@ def text_to_speech(text):
     playsound('output.mp3')
 
 if __name__ == "__main__":
-    credentials = service_account.Credentials.from_service_account_file('service_acc_key.json')
-    res = generate_text("avian-principle-418814", 'us-central1')
+    setup()
+    myimg = Image.load_from_file("WechatIMG19.jpg")
+    res = generate_text(myimg)
     text_to_speech(res)
