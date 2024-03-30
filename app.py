@@ -7,7 +7,7 @@ app = Flask(__name__)
 def upload_form():
     return render_template('form.html')
 
-@app.route('/upload', methods=['POST'])
+@app.route('/form', methods=['POST'])
 def upload_image():
     if 'photo' in request.files:
         photo = request.files['photo']
@@ -16,6 +16,10 @@ def upload_image():
         return 'Image uploaded successfully!'
     else:
         return 'No photo found in request!'
+
+@app.route('/home')
+def home():
+    return render_template('home.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
