@@ -4,13 +4,19 @@ from google.oauth2 import service_account
 from google.cloud import texttospeech
 from playsound import playsound
 
+def setup():
+    credentials = service_account.Credentials.from_service_account_file('service_acc_key.json')
+    vertexai.init(project="avian-principle-418814", location='us-central1', credentials=credentials)
+    global tts_client
+    tts_client = texttospeech.TextToSpeechClient(credentials=credentials)
 
-def generate_text(project_id: str, location: str) -> str:
+
+
+def generate_text(img) -> str:
     # Initialize Vertex AI
     
-    vertexai.init(project=project_id, location=location, credentials=credentials)
     # Load the model
-    img = Image.load_from_file("WechatIMG19.jpg")
+    
     multimodal_model = GenerativeModel("gemini-1.0-pro-vision")
     # Query the model
     response = multimodal_model.generate_content(["Explain what's going on in the image to a blind person.", img])
@@ -20,7 +26,6 @@ def generate_text(project_id: str, location: str) -> str:
 def text_to_speech(text):
     """Synthesizes speech from the input string of text."""
 
-    client = texttospeech.TextToSpeechClient(credentials=credentials)
 
     input_text = texttospeech.SynthesisInput(text=text)
 
@@ -36,7 +41,7 @@ def text_to_speech(text):
         audio_encoding=texttospeech.AudioEncoding.MP3
     )
 
-    response = client.synthesize_speech(
+    response = tts_client.synthesize_speech(
         request={"input": input_text, "voice": voice, "audio_config": audio_config}
     )
 
@@ -47,6 +52,7 @@ def text_to_speech(text):
     playsound('output.mp3')
 
 if __name__ == "__main__":
-    credentials = service_account.Credentials.from_service_account_file('service_acc_key.json')
-    res = generate_text("avian-principle-418814", 'us-central1')
+    setup()
+    test_img = Image.load_from_file("WechatIMG19.jpg")
+    res = generate_text(test_img)
     text_to_speech(res)
