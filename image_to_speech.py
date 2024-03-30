@@ -48,5 +48,5 @@ def text_to_speech(text):
 
 if __name__ == "__main__":
     credentials = service_account.Credentials.from_service_account_file('service_acc_key.json')
-    res = generate_text("avian-principle-418814", 'us-central1')
-    text_to_speech(res)
+    myres = generate_text("avian-principle-418814", 'us-central1')
+    text_to_speech(myres)
