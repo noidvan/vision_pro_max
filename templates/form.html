@@ -1,0 +1,28 @@
+<!-- templates/upload.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Take or Upload an Image</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <h1>Take or Upload an Image</h1>
+    <div id="camera-container">
+      <video id="video" width="300" height="300" autoplay></video>
+      <button id="capture-button">Capture Image</button>
+    </div>
+    <div id="preview-container" style="display: none">
+      <img
+        id="image-preview"
+        src=""
+        alt="Preview"
+        style="max-width: 300px; max-height: 300px"
+      />
+      <button id="retake-button">Retake</button>
+      <button id="next-button">Next</button>
+    </div>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+  </body>
+</html>
