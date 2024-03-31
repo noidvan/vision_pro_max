@@ -1,4 +1,3 @@
-// static/app.js
 document.addEventListener("DOMContentLoaded", function () {
   const video = document.getElementById("video")
   const imagePreview = document.getElementById("image-preview")
@@ -59,42 +58,40 @@ document.addEventListener("DOMContentLoaded", function () {
   })
 
   nextButton.addEventListener("click", function () {
-  // Ensure the imagePreview.src is not empty
-  if (imagePreview.src) {
-    // Convert the image URL back to a blob
-    fetch(imagePreview.src)
-      .then(response => response.blob())
-      .then(blob => {
-        // Convert blob to Base64
-        const reader = new FileReader();
-        reader.readAsDataURL(blob); 
-        reader.onloadend = function() {
-            const base64data = reader.result;
+    // Ensure the imagePreview.src is not empty
+    if (imagePreview.src) {
+      // Convert the image URL back to a blob
+      fetch(imagePreview.src)
+        .then((response) => response.blob())
+        .then((blob) => {
+          // Convert blob
+          const reader = new FileReader()
+          reader.readAsDataURL(blob)
+          reader.onloadend = function () {
+            const base64data = reader.result
 
-            // Extract Base64 data from the result
-            const base64ImageContent = base64data.split(',')[1];
+            // Extract blob data from the result
+            const base64ImageContent = base64data.split(",")[1]
 
             // Send the image data to Flask backend
-            fetch('/form', {
-              method: 'POST',
+            fetch("/form", {
+              method: "POST",
               headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
               },
-              body: JSON.stringify({image_data: base64ImageContent}),
+              body: JSON.stringify({ image_data: base64ImageContent }),
             })
-            .then(response => response.text())
-            .then(data => {
-              console.log('Success:', data);
-              // Handle success, such as redirecting to the home page or showing a success message
-              window.location.href = "/home"; // Redirect to the home page or show success message
-            })
-            .catch((error) => {
-              console.error('Error:', error);
-              // Handle error
-            });
-        }
-      });
-  }
+              .then((response) => response.text())
+              .then((data) => {
+                console.log("Success:", data)
+              })
+              .catch((error) => {
+                console.error("Error:", error)
+              })
+          }
+        })
+    }
+    document.getElementById('output-container').style.display = 'block';
   })
 
   // Start the camera when the page loads
@@ -116,3 +113,42 @@ $(window).scroll(function () {
 $(window).resize(function () {
   parallax_height()
 })
+
+function initMap() {
+  // HTML5 geolocation.
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      function (position) {
+        var pos = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        }
+
+        var map = new google.maps.Map(document.getElementById("map"), {
+          center: pos,
+          zoom: 15,
+        })
+
+        var marker = new google.maps.Marker({
+          position: pos,
+          map: map,
+          title: "Your current location",
+        })
+      },
+      function () {
+        handleLocationError(true, map.getCenter())
+      }
+    )
+  } else {
+    // Browser doesn't support Geolocation
+    handleLocationError(false)
+  }
+}
+
+function handleLocationError(browserHasGeolocation, pos) {
+  console.log(
+    browserHasGeolocation
+      ? "Error: The Geolocation service failed."
+      : "Error: Your browser doesn't support geolocation."
+  )
+}
