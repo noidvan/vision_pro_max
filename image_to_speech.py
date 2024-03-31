@@ -6,20 +6,20 @@ from playsound import playsound
 
 def setup():
     credentials = service_account.Credentials.from_service_account_file('service_acc_key.json')
-    vertexai.init(project="avian-principle-418814", location='us-central1', credentials=credentials)
+    vertexai.init(project="avian-principle-418814", location='northamerica-northeast1', credentials=credentials)
     global tts_client
     tts_client = texttospeech.TextToSpeechClient(credentials=credentials)
 
 
 
-def generate_text(img) -> str:
+def generate_text(img, prompt) -> str:
     # Initialize Vertex AI
     
     # Load the model
     
     multimodal_model = GenerativeModel("gemini-1.0-pro-vision")
     # Query the model
-    response = multimodal_model.generate_content(["Explain what's going on in the image to a blind person.", img])
+    response = multimodal_model.generate_content([prompt, img])
     print(response.text)
     return response.text
 
@@ -54,5 +54,5 @@ def text_to_speech(text):
 if __name__ == "__main__":
     setup()
     myimg = Image.load_from_file("WechatIMG19.jpg")
-    res = generate_text(myimg)
+    res = generate_text(myimg, "Describe what is going on in the image, keep it concise (under 10s of reading time), describe in the format: [color] [object] in [direction].")
     text_to_speech(res)
