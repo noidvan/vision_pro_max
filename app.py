@@ -54,7 +54,14 @@ def ask_user2():
 def call_python_function2():
     ask_user2()
     return 'Python function 2 called successfully'
+def more_descriptive():
+    print("More description")
 
+@app.route('/more_descriptive', methods=['GET'])
+def more_description():
+    more_descriptive()
+    return 'More description'
+    
 if __name__ == '__main__':
     its.setup()
     app.run(debug=True)
