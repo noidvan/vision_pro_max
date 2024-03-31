@@ -122,8 +122,10 @@
           .catch((error) => console.error("Error:", error))
       }
 
-      document.addEventListener("mousemove", resetTimer, resetTimer2)
-      document.addEventListener("keypress", resetTimer, resetTimer2)
+      document.addEventListener("mousemove", resetTimer)
+      document.addEventListener("mousemove", resetTimer2)
+      document.addEventListener("keypress", resetTimer)
+      document.addEventListener("keypress", resetTimer2)
 
       // Start the inactivity timer when the page loads
       window.onload = function () {
