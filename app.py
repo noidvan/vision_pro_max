@@ -47,6 +47,7 @@ def ask_user2():
     # Your Python function logic here
     print("Python function 2 called")
     its.text_to_speech("Since you didn't response, we gonna rise an alarm and call 911")
+    its.playsound("newalarm.mp3")
 
 
 @app.route('/ask_user2', methods=['GET'])
