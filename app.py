@@ -1,5 +1,9 @@
-# app.py
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
+import base64
+import os
+from io import BytesIO
+from PIL import Image
+import image_to_speech as its
 
 app = Flask(__name__)
 
@@ -9,17 +13,24 @@ def upload_form():
 
 @app.route('/form', methods=['POST'])
 def upload_image():
-    if 'photo' in request.files:
-        photo = request.files['photo']
-        # Save or process the photo here
-        photo.save('uploaded_photo.jpg')  # Example: Save the photo to a file
+    data = request.get_json()
+    if data and 'image_data' in data:
+        image_data = data['image_data']
+        image_data = base64.b64decode(image_data)
+        image = Image.open(BytesIO(image_data))
+        image.save('uploaded_photo.png', 'PNG')  # Save the photo to a file
+        myimg = its.Image.load_from_file("uploaded_photo.png")
+        res = its.generate_text(myimg)
+        its.text_to_speech(res)
+
         return 'Image uploaded successfully!'
     else:
-        return 'No photo found in request!'
+        return 'No image data found in request!', 400
 
 @app.route('/home')
 def home():
     return render_template('home.html')
 
 if __name__ == '__main__':
+    its.setup()
     app.run(debug=True)

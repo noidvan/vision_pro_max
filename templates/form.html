@@ -1,28 +1,51 @@
-<!-- templates/upload.html -->
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Take or Upload an Image</title>
-    <link href="style.css" rel="stylesheet" type="text/css" />
-  </head>
-  <body>
-    <h1>Take or Upload an Image</h1>
-    <div id="camera-container">
-      <video id="video" width="300" height="300" autoplay></video>
-      <button id="capture-button">Capture Image</button>
-    </div>
-    <div id="preview-container" style="display: none">
-      <img
-        id="image-preview"
-        src=""
-        alt="Preview"
-        style="max-width: 300px; max-height: 300px"
-      />
-      <button id="retake-button">Retake</button>
-      <button id="next-button">Next</button>
-    </div>
-    <script src="{{ url_for('static', filename='app.js') }}"></script>
-  </body>
+    <link href="style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<h1>Take or Upload an Image</h1>
+<div id="camera-container">
+    <video id="video" width="300" height="300" autoplay></video>
+    <button id="capture-button">Capture Image</button>
+</div>
+<div id="preview-container" style="display: none">
+    <img id="image-preview" src="" alt="Preview" style="max-width: 300px; max-height: 300px">
+    <button id="retake-button">Retake</button>
+    <button id="next-button">Next</button>
+</div>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+<script>
+  // Assuming app.js contains the necessary code to handle video capture
+  document.getElementById('next-button').addEventListener('click', function() {
+    const video = document.getElementById('video');
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const imageData = canvas.toDataURL('image/png').split(',')[1]; // Get Base64 encoded image
+    
+    fetch('/form', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({image_data: imageData}),
+    })
+    .then(response => response.text())
+    .then(data => {
+      console.log('Success:', data);
+      // Handle success (e.g., show success message, redirect, etc.)
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      // Handle error (e.g., show error message)
+    });
+  });
+</script>
+</body>
 </html>

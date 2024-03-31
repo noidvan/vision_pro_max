@@ -59,8 +59,42 @@ document.addEventListener("DOMContentLoaded", function () {
   })
 
   nextButton.addEventListener("click", function () {
-    // Navigate to a new page
-    window.location.href = "home" // Replace '/next-page' with the URL of the new page
+  // Ensure the imagePreview.src is not empty
+  if (imagePreview.src) {
+    // Convert the image URL back to a blob
+    fetch(imagePreview.src)
+      .then(response => response.blob())
+      .then(blob => {
+        // Convert blob to Base64
+        const reader = new FileReader();
+        reader.readAsDataURL(blob); 
+        reader.onloadend = function() {
+            const base64data = reader.result;
+
+            // Extract Base64 data from the result
+            const base64ImageContent = base64data.split(',')[1];
+
+            // Send the image data to Flask backend
+            fetch('/form', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({image_data: base64ImageContent}),
+            })
+            .then(response => response.text())
+            .then(data => {
+              console.log('Success:', data);
+              // Handle success, such as redirecting to the home page or showing a success message
+              window.location.href = "/home"; // Redirect to the home page or show success message
+            })
+            .catch((error) => {
+              console.error('Error:', error);
+              // Handle error
+            });
+        }
+      });
+  }
   })
 
   // Start the camera when the page loads
