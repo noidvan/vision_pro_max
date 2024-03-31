@@ -21,7 +21,7 @@ def upload_image():
         myimg = its.Image.load_from_file("uploaded_photo.png")
         res = its.generate_text(myimg, "Describe what is going on in the image, keep it concise (under 10s of reading time), describe in the format: [color] [object] in [direction].")
         its.text_to_speech(res)
-        additional_question = "Do you need more detailed description of the picture?"
+        additional_question = "Do you need more detailed description of the picture? Left side yes, right side no"
         its.text_to_speech(additional_question)
 
 
