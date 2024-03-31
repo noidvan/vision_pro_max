@@ -21,7 +21,7 @@ def upload_image():
         myimg = its.Image.load_from_file("uploaded_photo.png")
         res = its.generate_text(myimg, "Describe what is going on in the image, keep it concise (under 10s of reading time), describe in the format: [color] [object] in [direction].")
         its.text_to_speech(res)
-        additional_question = "Do you need more detailed description of the picture? Left side yes, right side no"
+        additional_question = "Do you need more detailed description of the picture? Right side yes, left side no"
         its.text_to_speech(additional_question)
 
 
@@ -59,7 +59,9 @@ def more_descriptive():
 
 @app.route('/more_descriptive', methods=['GET'])
 def more_description():
-    more_descriptive()
+    myimg = its.Image.load_from_file("uploaded_photo.png")
+    res = its.generate_text(myimg, "Conversationally describe what is going on in the image in detail to blind people, describe in the format: [object] in [direction], also tell me instructive text, colors, and size of objects, but keep it under 18s of reading time. ")
+    its.text_to_speech(res)
     return 'More description'
     
 if __name__ == '__main__':

@@ -1,62 +1,54 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const video = document.getElementById("video")
-  const imagePreview = document.getElementById("image-preview")
-  const captureButton = document.getElementById("capture-button")
-  const retakeButton = document.getElementById("retake-button")
-  const nextButton = document.getElementById("next-button")
-  const cameraContainer = document.getElementById("camera-container")
-  const previewContainer = document.getElementById("preview-container")
+  const video = document.getElementById("video");
+  const imagePreview = document.getElementById("image-preview");
+  const captureButton = document.getElementById("capture-button");
+  const retakeButton = document.getElementById("retake-button");
+  const nextButton = document.getElementById("next-button");
+  const cameraContainer = document.getElementById("camera-container");
+  const previewContainer = document.getElementById("preview-container");
 
-  let stream
+  let stream;
 
   async function startCamera() {
     try {
-      stream = await navigator.mediaDevices.getUserMedia({ video: true })
-      video.srcObject = stream
+      stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      video.srcObject = stream;
     } catch (error) {
-      console.error("Error accessing camera:", error)
+      console.error("Error accessing camera:", error);
     }
   }
 
   function stopCamera() {
     if (stream) {
-      const tracks = stream.getTracks()
-      tracks.forEach((track) => track.stop())
+      const tracks = stream.getTracks();
+      tracks.forEach((track) => track.stop());
     }
   }
 
   captureButton.addEventListener("click", function () {
-    const canvas = document.createElement("canvas")
-    const ctx = canvas.getContext("2d")
-    const width = video.videoWidth
-    const height = video.videoHeight
-    canvas.width = width
-    canvas.height = height
-    ctx.drawImage(video, 0, 0, width, height)
-
-    // Show preview container and hide camera container
-    cameraContainer.style.display = "none"
-    previewContainer.style.display = "block"
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const width = video.videoWidth;
+    const height = video.videoHeight;
+    canvas.width = width;
+    canvas.height = height;
+    ctx.drawImage(video, 0, 0, width, height);
 
     // Convert canvas content to a blob representing the captured image
     canvas.toBlob(function (blob) {
-      const imageUrl = URL.createObjectURL(blob)
-      imagePreview.src = imageUrl
-    })
-    if (imagePreview.src) {
-      // Convert the image URL back to a blob
-      fetch(imagePreview.src)
+      const imageUrl = URL.createObjectURL(blob);
+      imagePreview.src = imageUrl;
+
+      // Convert the image URL back to a blob for sending
+      fetch(imageUrl)
         .then((response) => response.blob())
         .then((blob) => {
-          // Convert blob
-          const reader = new FileReader()
-          reader.readAsDataURL(blob)
+          const reader = new FileReader();
+          reader.readAsDataURL(blob);
           reader.onloadend = function () {
-            const base64data = reader.result
-
-            // Extract blob data from the result
-            const base64ImageContent = base64data.split(",")[1]
-
+            const base64data = reader.result;
+            // Extract Base64 data from the result
+            const base64ImageContent = base64data.split(",")[1];
             // Send the image data to Flask backend
             fetch("/form", {
               method: "POST",
@@ -67,81 +59,54 @@ document.addEventListener("DOMContentLoaded", function () {
             })
               .then((response) => response.text())
               .then((data) => {
-                console.log("Success:", data)
+                console.log("Success:", data);
+                // Here, you might want to navigate to another page or show a success message
               })
               .catch((error) => {
-                console.error("Error:", error)
-              })
-          }
-        })
-    }
-    document.getElementById("output-container").style.display = "block"
+                console.error("Error:", error);
+              });
+          };
+        });
+    });
+
+    // Show preview container and hide camera container
+    cameraContainer.style.display = "none";
+    previewContainer.style.display = "block";
+
     // Stop the camera
-    stopCamera()
-  })
+    stopCamera();
+  });
 
   retakeButton.addEventListener("click", function () {
-    // Hide preview container and show camera container
-    previewContainer.style.display = "none"
-    cameraContainer.style.display = "block"
+    previewContainer.style.display = "none";
+    cameraContainer.style.display = "block";
+    startCamera();
+  });
 
-    // Start the camera again for retaking the image
-    startCamera()
-  })
-
+  // Adjust or remove the nextButton event listener as per your new logic
   nextButton.addEventListener("click", function () {
-    fetch("/more_description")
-      .then((response) => {
+    // Make a GET request to the /more_descriptive route
+    fetch("/more_descriptive")
+      .then(response => {
         if (response.ok) {
-          // If the request was successful, redirect the user
-          window.location.href = "/"
-        } else {
-          // Handle error response
-          console.error("Error:", response.statusText)
+          return response.text(); // or response.json() if you're returning JSON
         }
+        throw new Error('Network response was not ok.');
       })
-      .catch((error) => console.error("Error:", error))
-  })
-  // nextButton.addEventListener("click", function () {
-  //   // Ensure the imagePreview.src is not empty
-  //   if (imagePreview.src) {
-  //     // Convert the image URL back to a blob
-  //     fetch(imagePreview.src)
-  //       .then((response) => response.blob())
-  //       .then((blob) => {
-  //         // Convert blob
-  //         const reader = new FileReader()
-  //         reader.readAsDataURL(blob)
-  // reader.onloadend = function () {
-  //   const base64data = reader.result
-
-  //   // Extract blob data from the result
-  //   const base64ImageContent = base64data.split(",")[1]
-
-  //   // Send the image data to Flask backend
-  //   fetch("/form", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //             },
-  //             body: JSON.stringify({ image_data: base64ImageContent }),
-  //           })
-  //             .then((response) => response.text())
-  //             .then((data) => {
-  //               console.log("Success:", data)
-  //             })
-  //             .catch((error) => {
-  //               console.error("Error:", error)
-  //             })
-  //         }
-  //       })
-  //   }
-  //   document.getElementById("output-container").style.display = "block"
-  // })
-
+      .then(data => {
+        console.log("Success:", data);
+        // Handle success, such as showing a notification or redirecting
+      })
+      .catch(error => {
+        console.error("Error during fetch:", error);
+        // Handle any errors
+      });
+  });
+  
   // Start the camera when the page loads
-  startCamera()
-})
+  startCamera();
+});
+
 
 /*for header */
 function parallax_height() {
