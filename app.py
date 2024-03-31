@@ -36,6 +36,7 @@ def home():
 def ask_user():
     # Your Python function logic here
     print("Python function called")
+    its.text_to_speech("Please touch the screen so that we can know you are active, we care about your safety.")
 
 @app.route('/ask_user', methods=['GET'])
 def call_python_function():
@@ -45,6 +46,8 @@ def call_python_function():
 def ask_user2():
     # Your Python function logic here
     print("Python function 2 called")
+    its.text_to_speech("Since you didn't response, we gonna rise an alarm and call 911")
+
 
 @app.route('/ask_user2', methods=['GET'])
 def call_python_function2():
