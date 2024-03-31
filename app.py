@@ -19,7 +19,7 @@ def upload_image():
         image = Image.open(BytesIO(image_data))
         image.save('uploaded_photo.png', 'PNG')  # Save the photo to a file
         myimg = its.Image.load_from_file("uploaded_photo.png")
-        res = its.generate_text(myimg, "Describe what is going on in the image, keep it concise (under 10s of reading time), describe in the format: [color] [object] in [direction].")
+        res = its.generate_text(myimg)
         its.text_to_speech(res)
         additional_question = "Do you need more detailed description of the picture?"
         its.text_to_speech(additional_question)
@@ -32,6 +32,24 @@ def upload_image():
 @app.route('/home')
 def home():
     return render_template('home.html')
+
+def ask_user():
+    # Your Python function logic here
+    print("Python function called")
+
+@app.route('/ask_user', methods=['GET'])
+def call_python_function():
+    ask_user()
+    return 'Python function called successfully'
+
+def ask_user2():
+    # Your Python function logic here
+    print("Python function 2 called")
+
+@app.route('/ask_user2', methods=['GET'])
+def call_python_function2():
+    ask_user2()
+    return 'Python function 2 called successfully'
 
 if __name__ == '__main__':
     its.setup()

@@ -43,13 +43,13 @@
       style="margin-top: 46px"
     >
       <a
-        href="#band"
+        href="/"
         class="w3-bar-item w3-button w3-padding-large"
         onclick="myFunction()"
         >HOME</a
       >
       <a
-        href="#tour"
+        href="home"
         class="w3-bar-item w3-button w3-padding-large"
         onclick="myFunction()"
         >ABOUT US</a
@@ -62,7 +62,7 @@
       style="max-width: 800px"
       id="band"
     >
-      <h2 class="w3-wide">Take or Upload an Image</h2>
+      <h2 class="w3-wide">Take an Image</h2>
       <div id="camera-container">
         <video id="video" width="300" height="300" autoplay></video>
         <div class="container">
@@ -93,5 +93,43 @@
       </div>
     </div>
     <script src="static\app.js"></script>
+    <script>
+      const inactivityTimeout = 30000 // 30 seconds
+      const inactivityTimeout2 = 60000 // 60 seconds
+      let inactivityTimer
+      let inactivityTimer2
+
+      function resetTimer() {
+        clearTimeout(inactivityTimer)
+        inactivityTimer = setTimeout(callPythonFunction, inactivityTimeout)
+      }
+
+      function resetTimer2() {
+        clearTimeout(inactivityTimer2)
+        inactivityTimer2 = setTimeout(callPythonFunction2, inactivityTimeout2)
+      }
+
+      function callPythonFunction() {
+        fetch("/ask_user")
+          .then((response) => response.text())
+          .then((data) => console.log(data))
+          .catch((error) => console.error("Error:", error))
+      }
+      function callPythonFunction2() {
+        fetch("/ask_user2")
+          .then((response) => response.text())
+          .then((data) => console.log(data))
+          .catch((error) => console.error("Error:", error))
+      }
+
+      document.addEventListener("mousemove", resetTimer, resetTimer2)
+      document.addEventListener("keypress", resetTimer, resetTimer2)
+
+      // Start the inactivity timer when the page loads
+      window.onload = function () {
+        resetTimer()
+        resetTimer2()
+      }
+    </script>
   </body>
 </html>
