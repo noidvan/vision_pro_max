@@ -20,8 +20,11 @@ def upload_image():
         image = Image.open(BytesIO(image_data))
         image.save('uploaded_photo.png', 'PNG')  # Save the photo to a file
         myimg = its.Image.load_from_file("uploaded_photo.png")
-        res = its.generate_text(myimg)
-        its.text_to_speech(res)
+        #res = its.generate_text(myimg)
+        #its.text_to_speech(res)
+        additional_question = "Do you need more detailed description of the picture?"
+        its.text_to_speech(additional_question)
+
 
         return 'Image uploaded successfully!'
     else:
