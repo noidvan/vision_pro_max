@@ -43,22 +43,6 @@ document.addEventListener("DOMContentLoaded", function () {
       const imageUrl = URL.createObjectURL(blob)
       imagePreview.src = imageUrl
     })
-
-    // Stop the camera
-    stopCamera()
-  })
-
-  retakeButton.addEventListener("click", function () {
-    // Hide preview container and show camera container
-    previewContainer.style.display = "none"
-    cameraContainer.style.display = "block"
-
-    // Start the camera again for retaking the image
-    startCamera()
-  })
-
-  nextButton.addEventListener("click", function () {
-    // Ensure the imagePreview.src is not empty
     if (imagePreview.src) {
       // Convert the image URL back to a blob
       fetch(imagePreview.src)
@@ -91,8 +75,69 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         })
     }
-    document.getElementById('output-container').style.display = 'block';
+    document.getElementById("output-container").style.display = "block"
+    // Stop the camera
+    stopCamera()
   })
+
+  retakeButton.addEventListener("click", function () {
+    // Hide preview container and show camera container
+    previewContainer.style.display = "none"
+    cameraContainer.style.display = "block"
+
+    // Start the camera again for retaking the image
+    startCamera()
+  })
+
+  nextButton.addEventListener("click", function () {
+    fetch("/more_description")
+      .then((response) => {
+        if (response.ok) {
+          // If the request was successful, redirect the user
+          window.location.href = "/"
+        } else {
+          // Handle error response
+          console.error("Error:", response.statusText)
+        }
+      })
+      .catch((error) => console.error("Error:", error))
+  })
+  // nextButton.addEventListener("click", function () {
+  //   // Ensure the imagePreview.src is not empty
+  //   if (imagePreview.src) {
+  //     // Convert the image URL back to a blob
+  //     fetch(imagePreview.src)
+  //       .then((response) => response.blob())
+  //       .then((blob) => {
+  //         // Convert blob
+  //         const reader = new FileReader()
+  //         reader.readAsDataURL(blob)
+  // reader.onloadend = function () {
+  //   const base64data = reader.result
+
+  //   // Extract blob data from the result
+  //   const base64ImageContent = base64data.split(",")[1]
+
+  //   // Send the image data to Flask backend
+  //   fetch("/form", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //             },
+  //             body: JSON.stringify({ image_data: base64ImageContent }),
+  //           })
+  //             .then((response) => response.text())
+  //             .then((data) => {
+  //               console.log("Success:", data)
+  //             })
+  //             .catch((error) => {
+  //               console.error("Error:", error)
+  //             })
+  //         }
+  //       })
+  //   }
+  //   document.getElementById("output-container").style.display = "block"
+  // })
 
   // Start the camera when the page loads
   startCamera()
